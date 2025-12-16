@@ -247,15 +247,15 @@ Models are evaluated using:
 - MAPE (Mean Absolute Percentage Error): Percentage-based error
 - SMAPE (Symmetric MAPE): Balanced percentage error
 
- 🤝 Contributing
+  Contributing
 
-This project was developed as part of CS5820 AI Final Project by Monikaa Gaddipati.
+This project was developed as part of CS5820 AI Final Project by Monikaa Gaddipati,Arikatla Lakshmi.
 
  📝 License
 
 This project is for educational purposes.
 
- 🙏 Acknowledgments
+ Acknowledgments
 
 - Dataset: UCI Machine Learning Repository - Individual Household Electric Power Consumption Dataset
 - Frameworks: PyTorch, Streamlit, scikit-learn
