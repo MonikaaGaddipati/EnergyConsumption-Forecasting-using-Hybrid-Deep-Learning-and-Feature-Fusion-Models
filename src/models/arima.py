@@ -1,4 +1,4 @@
- 
+
 from __future__ import annotations
 
 import warnings
@@ -31,7 +31,7 @@ class ARIMAModel:
             self.order = tuple(int(x) for x in provided)
 
         elif isinstance(provided, int):
- 
+
             self.order = (int(provided), 1, 0)
             warnings.warn(
                 f"ARIMAModel received an integer for `order` ({provided}). Interpreting as (p,d,q)=({provided},1,0). "
@@ -49,7 +49,7 @@ class ARIMAModel:
                     UserWarning,
                 )
             else:
-   
+
                 warnings.warn(
                     "ARIMAModel constructor received unexpected `order` input; using default (3,1,2).",
                     UserWarning,
@@ -60,7 +60,7 @@ class ARIMAModel:
 
     def fit(self, y_train):
 
-       
+
         if isinstance(y_train, pd.DataFrame):
 
             if y_train.shape[1] > 1:
@@ -113,7 +113,7 @@ class ARIMAModel:
         self.is_fitted = True
 
 
- 
+
 
 
 

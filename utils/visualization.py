@@ -23,7 +23,7 @@ def plot_predictions(actual: np.ndarray, predicted: np.ndarray, save_path: str, 
 
 
 def plot_attention_heatmap(attention: np.ndarray, save_path: str, x_labels: Optional[list] = None, y_labels: Optional[list] = None) -> None:
- 
+
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     plt.figure(figsize=(8, 6))
     sns.heatmap(attention, xticklabels=x_labels, yticklabels=y_labels, cmap='viridis')

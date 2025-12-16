@@ -16,7 +16,7 @@ def get_logger(name: str = __name__,
 
     logger = logging.getLogger(name)
     logger.setLevel(level)
-    logger.propagate = False   
+    logger.propagate = False
 
 
     if logger.handlers:

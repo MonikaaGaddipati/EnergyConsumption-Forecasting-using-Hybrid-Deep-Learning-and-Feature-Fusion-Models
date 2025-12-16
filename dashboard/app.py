@@ -26,7 +26,7 @@ def load_metrics():
         "CNN-GRU-Attn": results_dir / "cnn_gru_attn_metrics.csv",
         "Hybrid": results_dir / "hybrid_metrics.csv",
     }
-    
+
     for model_name, file_path in metrics_files.items():
         if file_path.exists():
             try:
@@ -42,7 +42,7 @@ def load_metrics():
                     }
             except Exception as e:
                 st.warning(f"Could not load metrics for {model_name}: {e}")
-    
+
     return metrics
 
 metrics = load_metrics()
@@ -51,7 +51,7 @@ metrics = load_metrics()
 if metrics:
     st.subheader("📊 Model Performance Metrics")
     cols = st.columns(len(metrics))
-    
+
     for idx, (model_name, model_metrics) in enumerate(metrics.items()):
         with cols[idx]:
             st.metric(
@@ -60,7 +60,7 @@ if metrics:
                 delta=f"MAE: {model_metrics['MAE']:.4f}",
                 help=f"MAPE: {model_metrics['MAPE']:.2f}% | SMAPE: {model_metrics['SMAPE']:.2f}%"
             )
-    
+
     # Create comparison chart
     if len(metrics) > 1:
         st.subheader("📈 Model Comparison")
@@ -87,7 +87,7 @@ if figures_dir.exists():
 if available_models:
     selected_model = st.selectbox("Select a model to view visualizations:", available_models)
     model_figures_dir = figures_dir / selected_model
-    
+
     if model_figures_dir.exists():
         # Define all possible figure types
         all_figure_types = {
@@ -101,14 +101,14 @@ if available_models:
             "Attention Weights": f"attention_{selected_model}.png",
             "Multi-Step Forecast": f"forecast_multi_{selected_model}.png",
         }
-        
+
         # Only show figures that actually exist
         available_figures = {}
         for fig_name, fig_file in all_figure_types.items():
             fig_path = model_figures_dir / fig_file
             if fig_path.exists():
                 available_figures[fig_name] = fig_file
-        
+
         if available_figures:
             selected_figure = st.selectbox("Select visualization:", list(available_figures.keys()))
             figure_path = model_figures_dir / available_figures[selected_figure]

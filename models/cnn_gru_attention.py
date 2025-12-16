@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class CNNGRUAttention(nn.Module):
- 
+
     def __init__(self, input_dim: int, cnn_channels: int = 32, gru_hidden: int = 64, num_heads: int = 4):
         super().__init__()
 
@@ -20,13 +20,13 @@ class CNNGRUAttention(nn.Module):
         self.fc = nn.Linear(gru_hidden, 1)
 
     def forward(self, x):
-    
-        x_t = x.transpose(1, 2) 
-        c = self.relu(self.conv1(x_t)) 
-        c = c.transpose(1, 2)  
-        gru_out, _ = self.gru(c)  
-        attn_out, attn_weights = self.attn(gru_out, gru_out, gru_out)  
-        out = self.fc(attn_out[:, -1, :])  
+
+        x_t = x.transpose(1, 2)
+        c = self.relu(self.conv1(x_t))
+        c = c.transpose(1, 2)
+        gru_out, _ = self.gru(c)
+        attn_out, attn_weights = self.attn(gru_out, gru_out, gru_out)
+        out = self.fc(attn_out[:, -1, :])
         return out.squeeze(-1), attn_weights.detach().cpu().numpy()
 
 

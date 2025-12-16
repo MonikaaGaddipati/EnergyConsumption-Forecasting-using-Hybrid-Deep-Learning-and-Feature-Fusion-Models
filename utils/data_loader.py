@@ -187,7 +187,7 @@ def load_and_process_data(cfg_path: str = "config/config.yaml") -> None:
     n_total = arr_scaled.shape[0]
     for i in range(n_total - seq_len - pred_h + 1):
         X.append(arr_scaled[i:i + seq_len])
-        y.append(arr_scaled[i + seq_len:i + seq_len + pred_h, 0])  
+        y.append(arr_scaled[i + seq_len:i + seq_len + pred_h, 0])
     X = np.array(X)
     y = np.array(y).squeeze(-1)
     logger.info(f"Created sequences: X shape {X.shape}, y shape {y.shape}")

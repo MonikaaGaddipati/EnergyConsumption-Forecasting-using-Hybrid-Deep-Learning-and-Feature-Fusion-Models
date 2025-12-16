@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def inv_scale_target(scaler, scaled_vals: np.ndarray) -> np.ndarray:
-  
+
     if scaler is None:
         return scaled_vals
     n_features = scaler.mean_.shape[0]

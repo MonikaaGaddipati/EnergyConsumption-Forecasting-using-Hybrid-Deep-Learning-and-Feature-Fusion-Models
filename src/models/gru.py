@@ -9,7 +9,7 @@ class GRUModel(nn.Module):
         self.num_layers = num_layers
         self.n_static = n_static
 
- 
+
         self.gru = nn.GRU(
             input_size=n_features,
             hidden_size=hidden,
@@ -18,22 +18,22 @@ class GRUModel(nn.Module):
             dropout=dropout if num_layers > 1 else 0.0,
         )
 
- 
+
         input_to_fc = hidden + n_static if n_static > 0 else hidden
 
         self.fc = nn.Sequential(
             nn.Linear(input_to_fc, 64),
             nn.ReLU(),
-            nn.Linear(64, 1) 
+            nn.Linear(64, 1)
         )
 
     def forward(self, seq_x, static_x=None):
 
 
         out, _ = self.gru(seq_x)
-        last_out = out[:, -1, :]  
+        last_out = out[:, -1, :]
 
-  
+
         if static_x is not None and self.n_static > 0:
             combined = torch.cat([last_out, static_x], dim=1)
         else:
@@ -42,4 +42,4 @@ class GRUModel(nn.Module):
         pred = self.fc(combined)
         return pred
 
- 
+

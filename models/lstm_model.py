@@ -1,4 +1,4 @@
- 
+
 from typing import Any
 import torch
 import torch.nn as nn
@@ -20,7 +20,7 @@ class LSTMNetwork(nn.Module):
 
 
 class LSTMModel(pl.LightningModule):
-   
+
     def __init__(self, input_size: int, lr: float = 1e-3):
         super().__init__()
         self.save_hyperparameters()

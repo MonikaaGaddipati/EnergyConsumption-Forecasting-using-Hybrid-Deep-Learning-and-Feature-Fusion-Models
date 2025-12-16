@@ -12,10 +12,10 @@ import seaborn as sns
 import scipy.stats as stats
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
- 
+
 
 def _make_model_plot_path(base_dir: str, model_name: str, plot_name: str) -> str:
- 
+
     base = Path(base_dir) / model_name
     base.mkdir(parents=True, exist_ok=True)
     fname = f"{plot_name}_{model_name}.png"
@@ -37,7 +37,7 @@ def _show_or_save(fig: plt.Figure, save_path: Optional[str], show: bool) -> None
         plt.close(fig)
 
 
- 
+
 def mae(y_true: np.ndarray, y_pred: np.ndarray) -> float:
 
     return float(mean_absolute_error(y_true, y_pred))
@@ -206,7 +206,7 @@ def plot_forecast_multi(
     save_path: Optional[str] = None,
     show: bool = True,
 ) -> Tuple[plt.Figure, plt.Axes]:
- 
+
     if not true_batches or not pred_batches:
         raise ValueError("true_batches and pred_batches must be provided lists of arrays.")
 
@@ -244,7 +244,7 @@ def plot_attention(
     save_path: Optional[str] = None,
     show: bool = True,
 ) -> Tuple[Optional[plt.Figure], Optional[plt.Axes]]:
- 
+
     if alpha is None:
         print("No attention weights to plot.")
         return None, None
@@ -255,7 +255,7 @@ def plot_attention(
         if head_idx is not None:
             arr = arr[:, head_idx, :]
         else:
-            arr = arr.mean(axis=1) 
+            arr = arr.mean(axis=1)
     if arr.ndim == 2:
         if sample_idx is not None:
             to_plot = arr[sample_idx]
@@ -409,7 +409,7 @@ def plot_error_over_time(
 
 def save_metrics_csv(metrics: Dict[str, Any], path: str) -> None:
 
-    metrics = dict(metrics)  
+    metrics = dict(metrics)
     metrics["timestamp"] = pd.Timestamp.now().isoformat()
     df = pd.DataFrame([metrics])
     outdir = os.path.dirname(path)
@@ -421,4 +421,3 @@ def save_metrics_csv(metrics: Dict[str, Any], path: str) -> None:
     print(f" Appended metrics to {path}")
 
 
- 

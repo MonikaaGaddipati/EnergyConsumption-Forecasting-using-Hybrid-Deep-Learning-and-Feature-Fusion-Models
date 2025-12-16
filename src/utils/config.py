@@ -5,7 +5,7 @@ import yaml
 
 
 def load_config(path: str = "config/config.yaml") -> Dict[str, Any]:
- 
+
     p = Path(path)
     if not p.exists():
         raise FileNotFoundError(f"Config file not found at {path}. Create one or check the path.")
@@ -21,7 +21,7 @@ def load_config(path: str = "config/config.yaml") -> Dict[str, Any]:
 
 
 def get_cfg_value(cfg: Dict[str, Any], keys: List[str], default: Optional[Any] = None) -> Any:
- 
+
     node = cfg
     for k in keys:
         if not isinstance(node, dict) or k not in node:

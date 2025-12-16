@@ -6,14 +6,14 @@ import os
 
 
 def _standardize_column_names(df: pd.DataFrame) -> pd.DataFrame:
-    
+
     df = df.copy()
     df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
     return df
 
 
 def load_ucirepo_via_package(uciml_id: int = 235) -> pd.DataFrame:
-  
+
     try:
         from ucimlrepo import fetch_ucirepo
     except Exception as e:
@@ -63,4 +63,4 @@ def load_raw(use_ucimlrepo: bool = True, raw_dir: str = "data/raw", filename: st
         print(f" Saved a raw copy to {save_path}")
     return df
 
- 
+

@@ -16,28 +16,22 @@ def _save_dataframe_csv(df: pd.DataFrame, path: str) -> None:
 
 
 def _normalize_column_names(df: pd.DataFrame) -> pd.DataFrame:
-
     df = df.copy()
     df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
     return df
 
 
 def _ensure_datetime_index(df: pd.DataFrame, date_col: str = "date", time_col: str = "time", timestamp_name: str = "timestamp") -> pd.DataFrame:
-
     df = df.copy()
 
-
     if date_col in df.columns and time_col in df.columns:
-
         combined = pd.to_datetime(df[date_col].astype(str) + " " + df[time_col].astype(str), dayfirst=True, errors='coerce')
         df = df.drop(columns=[date_col, time_col])
         df[timestamp_name] = combined
         df = df.set_index(timestamp_name)
     elif isinstance(df.index, pd.DatetimeIndex):
-
         pass
     else:
-
         candidates = [c for c in df.columns if "timestamp" in c or "date" in c or "time" in c]
         if candidates:
             df[candidates[0]] = pd.to_datetime(df[candidates[0]], errors='coerce', dayfirst=True)
@@ -50,16 +44,13 @@ def _ensure_datetime_index(df: pd.DataFrame, date_col: str = "date", time_col: s
 
 
 def _coerce_numeric(df: pd.DataFrame, skip_cols: Optional[List[str]] = None) -> pd.DataFrame:
-
     df = df.copy()
     if skip_cols is None:
         skip_cols = []
     for col in df.columns:
         if col in skip_cols:
             continue
-
         try:
-
             df[col] = pd.to_numeric(df[col].astype(str).str.replace(",", "."), errors="coerce")
         except Exception:
             df[col] = pd.to_numeric(df[col], errors="coerce")
@@ -67,7 +58,6 @@ def _coerce_numeric(df: pd.DataFrame, skip_cols: Optional[List[str]] = None) -> 
 
 
 def _auto_detect_power_column(df: pd.DataFrame) -> str:
-
     cols = list(df.columns)
     if "global_active_power" in cols:
         return "global_active_power"
@@ -125,7 +115,6 @@ def add_time_features(df: pd.DataFrame) -> pd.DataFrame:
     df["month"] = idx.month
     df["is_weekend"] = df["dayofweek"].isin([5, 6]).astype(int)
 
-
     df["hour_sin"] = np.sin(2 * np.pi * df["hour"] / 24)
     df["hour_cos"] = np.cos(2 * np.pi * df["hour"] / 24)
     df["dow_sin"] = np.sin(2 * np.pi * df["dayofweek"] / 7)
@@ -180,7 +169,7 @@ def split_and_scale(df: pd.DataFrame, processed_dir: str, numeric_cols: List[str
     return train, test, scaler
 
 
- 
+
 
 def run_full_preprocessing(raw_df: pd.DataFrame,
                            processed_dir: str = "data/processed",
@@ -194,29 +183,18 @@ def run_full_preprocessing(raw_df: pd.DataFrame,
     if lags is None:
         lags = [24, 48, 168]
 
-
     df = raw_df.copy()
     df = _normalize_column_names(df)
-
-
     df = _ensure_datetime_index(df, date_col="date", time_col="time")
-
-
     df = _coerce_numeric(df, skip_cols=[])
-
-
     df = resample_series(df, freq=resample_freq, agg=resample_agg)
-
-
     df = create_energy_column(df, source_col=None, out_col="energy_consumption")
 
-  
     try:
         raw_hourly_path = Path("data/raw/household_power_consumption_hourly.csv")
         _save_dataframe_csv(df.reset_index(), str(raw_hourly_path))
     except Exception as e:
         print("Warning: failed to save hourly raw snapshot:", e)
-
 
     if fuse_weather_df is not None:
         wf = fuse_weather_df.copy()
@@ -224,9 +202,7 @@ def run_full_preprocessing(raw_df: pd.DataFrame,
             raise ValueError("fuse_weather_df must have a DatetimeIndex.")
         df = df.join(wf, how="left")
 
-
     df = fill_missing_and_smooth(df, interpolate_limit=interpolate_limit)
-
 
     if "energy_consumption" in df.columns:
         q1 = df["energy_consumption"].quantile(0.25)
@@ -238,19 +214,15 @@ def run_full_preprocessing(raw_df: pd.DataFrame,
         if mask.any():
             df.loc[mask, "energy_consumption"] = df["energy_consumption"].rolling(window=24, center=True, min_periods=1).median()[mask]
 
-
     df = add_time_features(df)
     df = ensure_holiday_flag(df, holiday_col="holiday_flag")
     df = add_lags_and_rolls(df, target_col="energy_consumption", lags=lags)
-
 
     numeric_cols = [c for c in df.columns if np.issubdtype(df[c].dtype, np.number)]
     binary_cols = ["is_weekend", "is_holiday"]
     numeric_cols = [c for c in numeric_cols if c not in binary_cols]
 
-
     train_df, test_df, scaler = split_and_scale(df, processed_dir, numeric_cols, test_size=test_size, scaler_type=scaler_type)
-
 
     try:
         report_path = Path("results/preprocessing_report.txt")
@@ -279,5 +251,3 @@ def run_full_preprocessing(raw_df: pd.DataFrame,
     print(f"   - Report: results/preprocessing_report.txt")
 
     return train_df, test_df, scaler
-
- 

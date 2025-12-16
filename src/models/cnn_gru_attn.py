@@ -10,14 +10,14 @@ class AttentionLayer(nn.Module):
 
     def forward(self, gru_output):
 
-        attn_weights = F.softmax(self.attn(gru_output), dim=1)  
-        context = torch.sum(attn_weights * gru_output, dim=1)  
+        attn_weights = F.softmax(self.attn(gru_output), dim=1)
+        context = torch.sum(attn_weights * gru_output, dim=1)
         return context, attn_weights.squeeze(-1)
 
 
 class CNN_GRU_Attn(nn.Module):
     def __init__(self, input_dim, cnn_channels=32, hidden_size=64, num_layers=1, attn_dim=32):
-        
+
         super().__init__()
 
 
@@ -42,16 +42,16 @@ class CNN_GRU_Attn(nn.Module):
         self.fc = nn.Linear(hidden_size, 1)
 
     def forward(self, seq, static=None):
-      
-      
+
+
         x = seq.permute(0, 2, 1)
         cnn_out = self.cnn(x)
-        cnn_out = cnn_out.permute(0, 2, 1)  
+        cnn_out = cnn_out.permute(0, 2, 1)
 
-        gru_out, _ = self.gru(cnn_out)  
+        gru_out, _ = self.gru(cnn_out)
 
-        context, attn_weights = self.attn(gru_out)  
+        context, attn_weights = self.attn(gru_out)
 
-        output = self.fc(context).squeeze(-1)  
+        output = self.fc(context).squeeze(-1)
 
         return output, attn_weights

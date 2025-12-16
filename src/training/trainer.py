@@ -1,6 +1,5 @@
 from typing import Tuple, Dict, Optional
 import os
-import math
 import random
 import copy
 import time
@@ -11,7 +10,6 @@ from tqdm import tqdm
 
 
 def set_seed(seed: int = 0):
-   
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -59,20 +57,16 @@ def train_model(model: torch.nn.Module,
                 device: Optional[str] = None,
                 save_path: str = "results/checkpoints/model_best.pth",
                 seed: int = 0) -> Tuple[Dict, str]:
-   
     set_seed(seed)
-
 
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
     device = torch.device(device)
 
-
     batch_size = int(cfg.get("batch_size", 64))
     num_workers = int(cfg.get("num_workers", 0))
     train_loader = _make_dataloader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = _make_dataloader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
-
 
     lr = float(cfg.get("lr", 1e-3))
     weight_decay = float(cfg.get("weight_decay", 0.0))
@@ -87,11 +81,8 @@ def train_model(model: torch.nn.Module,
             scheduler = torch.optim.lr_scheduler.StepLR(optimizer, **params)
         elif name == "reducelronplateau":
             scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, **params)
-         
-
 
     criterion = torch.nn.MSELoss()
-
 
     patience = int(cfg.get("early_stop_patience", 8))
     early_stopper = EarlyStopping(patience=patience, min_delta=cfg.get("min_delta", 1e-6))
@@ -110,20 +101,12 @@ def train_model(model: torch.nn.Module,
         t0 = time.time()
         loop = tqdm(train_loader, desc=f"Epoch {epoch}/{epochs} - train", leave=False)
         for batch in loop:
-           
             seq, static, target = batch
             seq = seq.to(device)
             static = static.to(device)
             target = target.to(device)
 
             optimizer.zero_grad()
-            # outputs = model(seq, static)
-            # # some models return (pred, extra) e.g. attention weights
-            # if isinstance(outputs, tuple) or isinstance(outputs, list):
-            #     preds = outputs[0]
-            # else:
-            #     preds = outputs
-            # loss = criterion(preds, target)
             outputs = model(seq, static)
 
             if isinstance(outputs, (tuple, list)):
@@ -131,20 +114,14 @@ def train_model(model: torch.nn.Module,
             else:
                 preds = outputs
 
-
             if preds.dim() > 1 and preds.size(-1) == 1:
                 preds = preds.view(-1)
             if target.dim() > 1 and target.size(-1) == 1:
                 target = target.view(-1)
 
-
             preds = preds.float()
             target = target.float()
-
             loss = criterion(preds, target)
-            
-   
-            
             loss.backward()
             optimizer.step()
 
@@ -152,7 +129,6 @@ def train_model(model: torch.nn.Module,
             loop.set_postfix({'batch_loss': loss.item()})
 
         avg_train_loss = float(np.mean(train_losses)) if len(train_losses) > 0 else float('nan')
-
 
         model.eval()
         val_losses = []
@@ -171,9 +147,7 @@ def train_model(model: torch.nn.Module,
                 val_losses.append(loss.item())
         avg_val_loss = float(np.mean(val_losses)) if len(val_losses) > 0 else float('nan')
 
-     
         if scheduler is not None:
-
             if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
                 scheduler.step(avg_val_loss)
             else:
@@ -185,17 +159,14 @@ def train_model(model: torch.nn.Module,
         epoch_time = time.time() - t0
         tqdm.write(f"Epoch {epoch:03d} train_loss={avg_train_loss:.6f} val_loss={avg_val_loss:.6f} time={epoch_time:.1f}s")
 
-
         improved = early_stopper.step(avg_val_loss, model)
         if improved:
-
             torch.save(early_stopper.best_weights(), save_path)
             best_val = avg_val_loss
 
         if early_stopper.should_stop():
             print(f"Early stopping at epoch {epoch}. Best val_loss={early_stopper.best_loss:.6f}")
             break
-
 
     if early_stopper.best_weights() is not None:
         model.load_state_dict(early_stopper.best_weights())

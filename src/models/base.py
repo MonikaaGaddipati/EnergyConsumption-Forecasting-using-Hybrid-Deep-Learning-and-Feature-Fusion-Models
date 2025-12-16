@@ -1,4 +1,4 @@
- 
+
 import abc
 from pathlib import Path
 import torch
@@ -24,4 +24,3 @@ class BaseModel(nn.Module, abc.ABC):
         self.load_state_dict(state)
         return self
 
-  

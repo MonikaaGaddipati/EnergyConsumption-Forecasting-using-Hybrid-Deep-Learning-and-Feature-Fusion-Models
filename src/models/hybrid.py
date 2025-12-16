@@ -5,7 +5,7 @@ from src.models.base import BaseModel
 
 
 class AttentionBlock(nn.Module):
-   
+
     def __init__(self, input_dim: int):
         super().__init__()
         self.attn = nn.Sequential(
@@ -15,9 +15,9 @@ class AttentionBlock(nn.Module):
         )
 
     def forward(self, x):
-        weights = F.softmax(self.attn(x), dim=1)  
-        context = torch.sum(weights * x, dim=1)   
-        return context, weights.squeeze(-1)       
+        weights = F.softmax(self.attn(x), dim=1)
+        context = torch.sum(weights * x, dim=1)
+        return context, weights.squeeze(-1)
 
 
 class HybridModel(BaseModel):
@@ -108,6 +108,6 @@ class HybridModel(BaseModel):
         return (y, attn_weights) if self.use_attention else y
 
 
- 
+
 
 

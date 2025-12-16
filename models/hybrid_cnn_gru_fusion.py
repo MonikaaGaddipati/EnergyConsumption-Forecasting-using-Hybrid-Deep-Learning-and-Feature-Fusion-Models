@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class FeatureAttention(nn.Module):
-    
+
     def __init__(self, feature_dim: int, hidden: int = 64):
         super().__init__()
         self.fc1 = nn.Linear(feature_dim, hidden)
@@ -36,14 +36,14 @@ class HybridCNNGRUFusion(nn.Module):
         self.fc_out = nn.Linear(gru_hidden, 1)
 
     def forward(self, x) -> Tuple[torch.Tensor, torch.Tensor]:
-       
-        x_t = x.transpose(1, 2)  
-        conv_out = self.relu(self.conv1(x_t))  
-        conv_out = conv_out.transpose(1, 2)   
-        feat = self.feature_attn(conv_out)   
-        gru_out, _ = self.gru(feat)   
+
+        x_t = x.transpose(1, 2)
+        conv_out = self.relu(self.conv1(x_t))
+        conv_out = conv_out.transpose(1, 2)
+        feat = self.feature_attn(conv_out)
+        gru_out, _ = self.gru(feat)
         attn_out, attn_weights = self.temporal_attn(gru_out, gru_out, gru_out)
-        out = self.fc_out(attn_out[:, -1, :])  
+        out = self.fc_out(attn_out[:, -1, :])
         return out.squeeze(-1), attn_weights.detach()
 
 

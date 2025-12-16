@@ -1,4 +1,3 @@
- 
 from typing import List, Tuple
 import numpy as np
 import torch
@@ -9,7 +8,6 @@ from pathlib import Path
 class EnergyDataset(Dataset):
     def __init__(self, df: pd.DataFrame, seq_features: List[str], static_features: List[str],
                  target_col: str = "energy_consumption", window: int = 168, horizon: int = 1):
- 
         self.df = df.reset_index(drop=True)
         self.seq_features = seq_features
         self.static_features = static_features
@@ -49,5 +47,3 @@ class EnergyDataset(Dataset):
         static = torch.from_numpy(self.X_static[idx])   # (n_static,)
         target = torch.tensor(self.y[idx], dtype=torch.float32)
         return seq, static, target
-
- 
